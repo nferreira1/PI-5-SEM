@@ -1,0 +1,4 @@
+CREATE DATABASE identity_service_db_test;
+CREATE DATABASE product_service_db_test;
+CREATE DATABASE order_service_db_test;
+CREATE DATABASE payment_service_db_test;
