@@ -2,7 +2,7 @@ import { env } from "@/env";
 import * as amqp from "amqplib";
 import * as nodemailer from "nodemailer";
 
-const RABBITMQ_URL = `amqp://${env.RABBITMQ_USER}:${env.RABBITMQ_PASS}@${env.BUN_ENV === "development" ? "localhost" : "rabbitmq"}:5672`;
+const RABBITMQ_URL = `amqp://${env.RABBITMQ_USER}:${env.RABBITMQ_PASS}@${env.RABBITMQ_HOST}:5672`;
 const QUEUE_NAME = "email_queue";
 
 const transporter = nodemailer.createTransport({

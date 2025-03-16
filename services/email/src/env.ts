@@ -5,7 +5,7 @@ import { z } from "zod";
 config({ path: resolve(__dirname, "../../../.env") });
 
 const envVariables = z.object({
-	BUN_ENV: z.union([z.literal("development"), z.literal("production")]),
+	RABBITMQ_HOST: z.union([z.literal("localhost"), z.literal("rabbitmq")]),
 	RABBITMQ_USER: z.string(),
 	RABBITMQ_PASS: z.string(),
 	EMAIL_USER: z.string(),
