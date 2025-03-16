@@ -1,0 +1,20 @@
+{
+	"name": "email",
+	"scripts": {
+		"dev": "bun run --hot src/index.ts",
+		"build": "bun build src/index.ts --outdir=dist --minify --target=bun"
+	},
+	"dependencies": {
+		"amqplib": "^0.10.5",
+		"dotenv": "^16.4.7",
+		"hono": "^4.7.4",
+		"nodemailer": "^6.10.0",
+		"zod": "^3.24.2"
+	},
+	"devDependencies": {
+		"@types/amqplib": "^0.10.7",
+		"@types/bun": "latest",
+		"@types/nodemailer": "^6.4.17",
+		"prettier": "^3.5.3"
+	}
+}
