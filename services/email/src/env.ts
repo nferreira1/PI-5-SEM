@@ -7,6 +7,7 @@ config({ path: resolve(__dirname, "../../../.env") });
 const envVariables = z.object({
 	RABBITMQ_HOST: z.union([z.literal("localhost"), z.literal("rabbitmq")]),
 	RABBITMQ_USER: z.string(),
+	EMAIL_SERVICE_QUEUE_NAME: z.string(),
 	RABBITMQ_PASS: z.string(),
 	EMAIL_USER: z.string(),
 	EMAIL_PASS: z.string(),

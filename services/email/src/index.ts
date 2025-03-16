@@ -3,7 +3,6 @@ import * as amqp from "amqplib";
 import * as nodemailer from "nodemailer";
 
 const RABBITMQ_URL = `amqp://${env.RABBITMQ_USER}:${env.RABBITMQ_PASS}@${env.RABBITMQ_HOST}:5672`;
-const QUEUE_NAME = "email_queue";
 
 const transporter = nodemailer.createTransport({
 	host: "smtp.gmail.com",
@@ -18,13 +17,13 @@ const transporter = nodemailer.createTransport({
 async function startConsumer() {
 	const connection = await amqp.connect(RABBITMQ_URL);
 	const channel = await connection.createChannel();
-	await channel.assertQueue(QUEUE_NAME, { durable: true });
+	await channel.assertQueue(env.EMAIL_SERVICE_QUEUE_NAME, { durable: true });
 
 	console.log(
 		"✅ Email consumer is now running and listening for messages...",
 	);
 
-	channel.consume(QUEUE_NAME, async (msg) => {
+	channel.consume(env.EMAIL_SERVICE_QUEUE_NAME, async (msg) => {
 		if (msg) {
 			const emailData = JSON.parse(msg.content.toString());
 
@@ -35,7 +34,7 @@ async function startConsumer() {
 					from: `Techcommerce <${env.EMAIL_USER}>`,
 					to: emailData.to,
 					subject: emailData.subject,
-					text: emailData.text,
+					html: emailData.html,
 				});
 
 				console.log("✅ Email successfully sent!");
