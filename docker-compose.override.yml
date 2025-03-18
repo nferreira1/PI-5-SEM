@@ -10,7 +10,7 @@ services:
         networks:
             - techcommerce-network
         volumes:
-            - ./infra/databases/init.dev.sql:/docker-entrypoint-initdb.d/init.sql
+            - ./infra/databases/init.development.sql:/docker-entrypoint-initdb.d/init.sql
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -U postgres"]
             interval: 5s
@@ -18,6 +18,6 @@ services:
 
     kong:
         volumes:
-            - ./services/gateway/kong.dev.yml:/etc/kong/kong.yml:ro
+            - ./services/gateway/kong.development.yml:/etc/kong/kong.yml:ro
         extra_hosts:
             - "host.docker.internal:host-gateway"

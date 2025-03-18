@@ -1,0 +1,35 @@
+_format_version: "3.0"
+services:
+    - name: identity
+      url: http://identity-service:8080
+      routes:
+          - name: identity-docs
+            paths:
+                - /identity/api-docs
+            methods:
+                - GET
+                - OPTIONS
+            strip_path: false
+          - name: identity-login
+            paths:
+                - /identity/auth/login
+            methods:
+                - POST
+                - OPTIONS
+            strip_path: false
+          - name: identity-user
+            paths:
+                - /identity/user
+            methods:
+                - POST
+                - OPTIONS
+            strip_path: false
+          - name: identity-address
+            paths:
+                - /identity/address
+            methods:
+                - GET
+                - PUT
+                - POST
+                - OPTIONS
+            strip_path: false

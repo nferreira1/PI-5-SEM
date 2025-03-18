@@ -14,8 +14,13 @@ services:
         environment:
             RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
             RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+            RABBITMQ_CONSUMER_TIMEOUT: 0
         networks:
+            - rabbitmq-network
             - techcommerce-network
+        volumes:
+            - rabbitmq_data:/var/lib/rabbitmq
+            - rabbitmq_logs:/var/log/rabbitmq
 
     notification-db:
         image: redis:7
@@ -26,7 +31,7 @@ services:
             - redis_data:/data
 
     kong-database:
-        image: postgres:13
+        image: postgres:15
         container_name: kong-database
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -U kong -d kong"]
@@ -39,6 +44,8 @@ services:
             POSTGRES_PASSWORD: kong
         networks:
             - kong-network
+        volumes:
+            - kong_db_data:/var/lib/postgresql/data
 
     kong:
         image: kong/kong-gateway:3.9.0.1
@@ -56,7 +63,6 @@ services:
             KONG_PROXY_ERROR_LOG: /dev/stderr
             KONG_ADMIN_ERROR_LOG: /dev/stderr
             KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl
-            KONG_PLUGINS: bundled,cors
         ports:
             - 8000:8000
             - 8443:8443
@@ -67,36 +73,34 @@ services:
             - 8003:8003
             - 8004:8004
         networks:
-            - techcommerce-network
             - kong-network
+            - techcommerce-network
         volumes:
-            - ./kong.yml:/etc/kong/kong.yml:ro
+            - kong_config:/etc/kong
         command: >
             sh -c "kong migrations bootstrap &&
                   kong config db_import /etc/kong/kong.yml &&
                   kong start"
 
-    swagger:
-        image: swaggerapi/swagger-ui:v5.20.1
-        container_name: swagger
-        depends_on:
-            - kong
-        environment:
-            URLS: "[{ name: 'Identity', url: 'http://localhost:8000/identity/api-docs' }"
-        ports:
-            - 80:8080
-        networks:
-            - techcommerce-network
-            - kong-network
-
 networks:
     techcommerce-network:
         name: techcommerce-network
+        driver: bridge
+    rabbitmq-network:
+        name: rabbitmq-network
         driver: bridge
     kong-network:
         name: kong-network
         driver: bridge
 
 volumes:
+    rabbitmq_data:
+        name: rabbitmq_data
+    rabbitmq_logs:
+        name: rabbitmq_logs
     redis_data:
         name: redis_data
+    kong_db_data:
+        name: kong_db_data
+    kong_config:
+        name: kong_config
