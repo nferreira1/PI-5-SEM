@@ -1,12 +1,13 @@
 {
 	"name": "email",
 	"scripts": {
-		"dev": "bun run --hot src/index.ts",
+		"dev": "bun run --hot --env-file=../../.env.development src/index.ts",
 		"build": "bun build src/index.ts --outdir=dist --minify --target=bun"
 	},
 	"dependencies": {
 		"amqplib": "^0.10.5",
 		"dotenv": "^16.4.7",
+		"email": "file:",
 		"hono": "^4.7.4",
 		"nodemailer": "^6.10.0",
 		"zod": "^3.24.2"
