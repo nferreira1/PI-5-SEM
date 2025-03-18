@@ -63,9 +63,17 @@ services:
             - identity-network
             - rabbitmq-network
 
+    kong:
+        volumes:
+            - ./services/gateway/kong.production.yml:/etc/kong/kong.yml:ro
+        networks:
+            - identity-network
     frontend:
         image: techcommerce/frontend:1.0.0
         container_name: frontend
+        depends_on:
+            - identity-service
+            - kong
         build:
             context: ./frontend
             dockerfile: Dockerfile
@@ -75,12 +83,6 @@ services:
             - ${FRONTEND_PORT}:80
         networks:
             - techcommerce-network
-
-    kong:
-        volumes:
-            - ./services/gateway/kong.production.yml:/etc/kong/kong.yml:ro
-        networks:
-            - identity-network
 
 networks:
     identity-network:

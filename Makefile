@@ -2,6 +2,9 @@ MAKEFLAGS += --no-print-directory
 
 .PHONY: all checks init_status check-go check-java check-bun init_services run-services
 
+PRIVATE_KEY = keys/private.key
+PUBLIC_KEY = keys/public.key
+
 TOTAL = 3
 TMP_STATUS = /tmp/install_status.txt
 
@@ -22,6 +25,17 @@ define PRINT_ALL
 	echo ""; \
 	cat $(TMP_SERVICES);
 endef
+
+gkeys:
+	@if [ ! -s $(PRIVATE_KEY) ] || [ ! -s $(PUBLIC_KEY) ]; then \
+		echo "🔄 Arquivos vazios ou ausentes. Gerando novas chaves..."; \
+		mkdir -p keys; \
+		openssl genpkey -algorithm RSA -out $(PRIVATE_KEY); \
+		openssl rsa -in $(PRIVATE_KEY) -pubout -out $(PUBLIC_KEY); \
+		echo "✅ Chaves geradas em keys"; \
+	else \
+		echo "⚡ Chaves já existem e não estão vazias. Nenhuma ação necessária."; \
+	fi
 
 all: init_services init_status checks run-services
 
