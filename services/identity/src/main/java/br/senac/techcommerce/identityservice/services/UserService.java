@@ -18,7 +18,7 @@ public class UserService {
     private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    private RabbitMQProducerService rabbitMQProducerService;
+    private SQSProducerService sqsProducerService;
 
     @Autowired
     private UserRepository userRepository;
@@ -36,19 +36,16 @@ public class UserService {
 
         user.setPassword(this.passwordEncoder.encode(user.getPassword()));
 
-        System.out.println("Endereços: " + user.getAddresses().toString());
-
         if (!user.getAddresses().isEmpty()) {
             user.getAddresses().forEach(address -> address.setUser(user));
         }
 
         var userSaved = this.userRepository.save(user);
 
-        this.rabbitMQProducerService.sendEmailMessage(user.getEmail(), "Boas vindas",
+        this.sqsProducerService.send("nathan@circulomilitar.com.br", "Boas vindas",
                 "Seja bem-vindo ao TechCommerce!");
 
         return userSaved;
-
     }
 
 }

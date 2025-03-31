@@ -1,4 +1,39 @@
 services:
+    aws:
+        image: localstack/localstack:4.3.0
+        container_name: aws
+        environment:
+            - GATEWAY_LISTEN=0.0.0.0:4566
+        ports:
+            - 4566:4566
+        networks:
+            - aws-network
+
+    terraform:
+        image: hashicorp/terraform:1.11
+        container_name: terraform
+        depends_on:
+            - aws
+        working_dir: /workspace
+        entrypoint: ["/bin/sh", "-c"]
+        command: >
+            "
+              terraform init \ &&
+              terraform apply -auto-approve \ &&
+              sleep infinity
+            "
+        volumes:
+            - ./infra/iac/main.development.tf:/workspace/main.tf
+            - ./infra/iac/variables.tf:/workspace/variables.tf
+            - ./.env.development:/workspace/.env.development
+        environment:
+            AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+            AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+            TF_VAR_EMAIL_SERVICE_QUEUE_NAME: ${EMAIL_SERVICE_QUEUE_NAME}
+        networks:
+            - aws-network
+
     postgres:
         image: postgres:15
         container_name: postgres
@@ -11,6 +46,7 @@ services:
             - techcommerce-network
         volumes:
             - ./infra/databases/init.development.sql:/docker-entrypoint-initdb.d/init.sql
+            - postgres_data:/var/lib/postgresql/data
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -U postgres"]
             interval: 5s
@@ -21,3 +57,12 @@ services:
             - ./services/gateway/kong.development.yml:/etc/kong/kong.yml:ro
         extra_hosts:
             - "host.docker.internal:host-gateway"
+
+networks:
+    aws-network:
+        name: aws-network
+        driver: bridge
+
+volumes:
+    postgres_data:
+        name: postgres_data

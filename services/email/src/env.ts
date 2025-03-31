@@ -2,13 +2,15 @@ import { config } from "dotenv";
 import { resolve } from "path";
 import { z } from "zod";
 
-if (Bun.env.NODE_ENV === "development") config({ path: resolve(__dirname, `../../../.env.${Bun.env.MODE}`) });
+if (Bun.env.NODE_ENV === "development")
+	config({ path: resolve(__dirname, `../../../.env.${Bun.env.MODE}`) });
 
 const envVariables = z.object({
-	EMAIL_SERVICE_QUEUE_NAME: z.string(),
-	RABBITMQ_HOST: z.union([z.literal("localhost"), z.literal("rabbitmq")]),
-	RABBITMQ_USER: z.string(),
-	RABBITMQ_PASS: z.string(),
+	AWS_SQS_QUEUE_ENDPOINT: z.string(),
+	AWS_ACCESS_KEY_ID: z.string(),
+	AWS_SECRET_ACCESS_KEY: z.string(),
+	AWS_DEFAULT_REGION: z.string(),
+	EMAIL_SERVICE_QUEUE_URL: z.string(),
 	EMAIL_USER: z.string(),
 	EMAIL_PASS: z.string(),
 });

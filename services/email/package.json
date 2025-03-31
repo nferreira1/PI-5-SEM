@@ -5,7 +5,8 @@
 		"build": "bun build src/index.ts --outdir=dist --minify --target=bun"
 	},
 	"dependencies": {
-		"amqplib": "^0.10.5",
+		"@aws-sdk/client-sqs": "^3.777.0",
+		"chalk": "^5.4.1",
 		"dotenv": "^16.4.7",
 		"email": "file:",
 		"hono": "^4.7.4",
@@ -13,7 +14,6 @@
 		"zod": "^3.24.2"
 	},
 	"devDependencies": {
-		"@types/amqplib": "^0.10.7",
 		"@types/bun": "latest",
 		"@types/nodemailer": "^6.4.17",
 		"prettier": "^3.5.3"
