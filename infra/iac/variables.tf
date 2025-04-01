@@ -1,3 +1,8 @@
+variable "AWS_ENDPOINT" {
+  type    = string
+  default = null
+}
+
 variable "AWS_ACCESS_KEY_ID" {
   type    = string
   default = null

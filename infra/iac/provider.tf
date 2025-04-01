@@ -4,16 +4,10 @@ provider "aws" {
   secret_key                  = var.AWS_SECRET_ACCESS_KEY
   skip_credentials_validation = true
   skip_requesting_account_id  = true
+  s3_use_path_style           = true
 
   endpoints {
-    sqs = "http://aws:4566"
+    sqs = var.AWS_ENDPOINT != null ? var.AWS_ENDPOINT : null
+    s3  = var.AWS_ENDPOINT != null ? var.AWS_ENDPOINT : null
   }
-}
-
-resource "aws_sqs_queue" "sqs" {
-  name = var.EMAIL_SERVICE_QUEUE_NAME
-}
-
-output "sqs_queue_url" {
-  value = aws_sqs_queue.sqs.url
 }
