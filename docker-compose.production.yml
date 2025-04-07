@@ -1,13 +1,10 @@
 services:
     email-service:
-        image: techcommerce/email-service:1.0.0
+        image: nferreira1/techcommerce/email-service:1.0.0
         container_name: email-service
         build:
             context: ./services/email
             dockerfile: Dockerfile
-        depends_on:
-            rabbitmq:
-                condition: service_healthy
         environment:
             AWS_SQS_QUEUE_ENDPOINT: ${AWS_SQS_QUEUE_ENDPOINT}
             AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
@@ -16,8 +13,6 @@ services:
             EMAIL_SERVICE_QUEUE_URL: ${EMAIL_SERVICE_QUEUE_URL}
             EMAIL_USER: ${EMAIL_USER}
             EMAIL_PASS: ${EMAIL_PASS}
-        networks:
-            - rabbitmq-network
         command: ["bun", "run", "dist/index.js"]
 
     identity-db:
@@ -33,21 +28,18 @@ services:
             POSTGRES_PASSWORD: ${IDENTITY_DB_PASS}
             POSTGRES_DB: ${IDENTITY_DB_NAME}
         networks:
-            - rabbitmq-network
             - identity-network
         volumes:
             - identity_db_data:/var/lib/postgresql/data
 
     identity-service:
-        image: techcommerce/identity-service:1.0.0
+        image: nferreira1/techcommerce/identity-service:1.0.0
         container_name: identity-service
         build:
             context: .
             dockerfile: ./services/identity/Dockerfile
         depends_on:
             identity-db:
-                condition: service_healthy
-            rabbitmq:
                 condition: service_healthy
         environment:
             AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
@@ -63,7 +55,6 @@ services:
             - 8080
         networks:
             - identity-network
-            - rabbitmq-network
 
     kong:
         volumes:
@@ -71,7 +62,7 @@ services:
         networks:
             - identity-network
     frontend:
-        image: techcommerce/frontend:1.0.0
+        image: nferreira1/techcommerce/frontend:1.0.0
         container_name: frontend
         depends_on:
             - identity-service
