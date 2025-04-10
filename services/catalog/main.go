@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/nferreira1/PI-5-SEM/services/product/internal/configs"
-	"github.com/nferreira1/PI-5-SEM/services/product/internal/routers"
+	"github.com/nferreira1/PI-5-SEM/services/catalog/internal/configs"
+	"github.com/nferreira1/PI-5-SEM/services/catalog/internal/routers"
 )
 
 //go:generate swag init --output ./docs --parseDependency
@@ -11,7 +11,7 @@ import (
 // @version 1.0
 // @description API for the catalog management.
 // @host localhost:8081
-// @BasePath /
+// @BasePath /catalog
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization

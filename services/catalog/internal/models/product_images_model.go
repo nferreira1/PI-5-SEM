@@ -8,17 +8,17 @@ import (
 	"github.com/google/uuid"
 )
 
+type ProductImagesRequest struct {
+	Base64    string `json:"base64"`
+	Principal bool   `json:"principal"`
+}
+
 type ProductImages struct {
 	ProductImageId int       `gorm:"primaryKey;autoIncrement" json:"productImageId"`
 	Url            string    `gorm:"type:text;not null" json:"url"`
 	Principal      bool      `gorm:"not null" json:"principal"`
 	CreatedAt      time.Time `gorm:"autoCreateTime" json:"createdAt"`
 	ProductId      uuid.UUID `gorm:"type:uuid;not null" json:"productId"`
-}
-
-type ProductImagesRequest struct {
-	Base64    string `json:"base64"`
-	Principal bool   `json:"principal"`
 }
 
 func (pi ProductImagesRequest) Validate() error {

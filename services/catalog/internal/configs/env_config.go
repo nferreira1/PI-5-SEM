@@ -32,7 +32,7 @@ type Environment struct {
 	AwsAccessKeyId     string `env:"AWS_ACCESS_KEY_ID"`
 	AwsSecretAccessKey string `env:"AWS_SECRET_ACCESS_KEY"`
 	AwsS3Endpoint      string `env:"AWS_S3_ENDPOINT"`
-	AwsBucket          string `env:"AWS_BUCKET_NAME_PRODUCTS_IMAGES"`
+	AwsBucket          string `env:"CATALOG_SERVICE_AWS_BUCKET_NAME_PRODUCTS_IMAGES"`
 }
 
 func GetEnv() *Environment {

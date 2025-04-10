@@ -11,8 +11,8 @@ services:
             AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
             AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
             EMAIL_SERVICE_QUEUE_URL: ${EMAIL_SERVICE_QUEUE_URL}
-            EMAIL_USER: ${EMAIL_USER}
-            EMAIL_PASS: ${EMAIL_PASS}
+            EMAIL_SERVICE_EMAIL_USER: ${EMAIL_SERVICE_EMAIL_USER}
+            EMAIL_SERVICE_EMAIL_PASS: ${EMAIL_SERVICE_EMAIL_PASS}
         command: ["bun", "run", "dist/index.js"]
 
     identity-db:

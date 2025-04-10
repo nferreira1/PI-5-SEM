@@ -12,7 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/gofiber/fiber/v2"
-	"github.com/nferreira1/PI-5-SEM/services/product/internal/configs"
+	"github.com/nferreira1/PI-5-SEM/services/catalog/internal/configs"
 )
 
 func UploadImageToS3(ctx context.Context, base64Image string) (string, error) {
@@ -21,7 +21,7 @@ func UploadImageToS3(ctx context.Context, base64Image string) (string, error) {
 
 	data, err := base64.StdEncoding.DecodeString(base64Image)
 	if err != nil {
-		return "", fiber.NewError(fiber.StatusInternalServerError, "Erro ao decodificar a imagem")
+		return "", fiber.NewError(fiber.StatusInternalServerError, "Erro ao decodificar a imagem, tente novamente.")
 	}
 
 	cfg, err := config.LoadDefaultConfig(ctx,
@@ -30,7 +30,7 @@ func UploadImageToS3(ctx context.Context, base64Image string) (string, error) {
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(env.AwsAccessKeyId, env.AwsSecretAccessKey, "")),
 	)
 	if err != nil {
-		return "", fiber.NewError(fiber.StatusInternalServerError, "Erro ao carregar configuração AWS")
+		return "", fiber.NewError(fiber.StatusInternalServerError, "Erro ao carregar configuração AWS, tente novamente.")
 	}
 
 	client := s3.NewFromConfig(cfg)
@@ -46,7 +46,7 @@ func UploadImageToS3(ctx context.Context, base64Image string) (string, error) {
 	_, err = client.PutObject(ctx, input)
 	if err != nil {
 		print(err.Error())
-		return "", fiber.NewError(fiber.StatusInternalServerError, "Erro ao fazer upload da imagem")
+		return "", fiber.NewError(fiber.StatusInternalServerError, "Erro ao fazer upload da imagem, tente novamente.")
 	}
 
 	url := ""

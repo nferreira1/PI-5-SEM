@@ -6,8 +6,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
-	"github.com/nferreira1/PI-5-SEM/services/product/internal/models"
-	"github.com/nferreira1/PI-5-SEM/services/product/internal/services"
+	"github.com/nferreira1/PI-5-SEM/services/catalog/internal/models"
+	"github.com/nferreira1/PI-5-SEM/services/catalog/internal/services"
 )
 
 type ProductController struct {
@@ -62,7 +62,7 @@ func (pc *ProductController) Post(c *fiber.Ctx) error {
 	}
 	product.Images = uploadedImages
 
-	if err := pc.service.CreateProduct(&product); err != nil {
+	if err := pc.service.Create(&product); err != nil {
 		return err
 	}
 
@@ -78,14 +78,13 @@ func (pc *ProductController) Post(c *fiber.Ctx) error {
 // @Param productId path string true "Product ID"
 // @Success 200 {object} models.Product
 // @Failure 400 {object} exceptions.ErrorResponseException
+// @Failure 404 {object} exceptions.ErrorResponseException
 // @Failure 500 {object} exceptions.ErrorResponseException
 // @Router /product/{productId} [get]
 func (pc *ProductController) Get(c *fiber.Ctx) error {
 	id := c.Params("productId")
 
-	print("teste: ", id)
-
-	product, err := pc.service.GetProduct(id)
+	product, err := pc.service.GetById(id)
 
 	if err != nil {
 		return fiber.NewError(fiber.StatusNotFound, "Produto não encontrado.")
@@ -105,7 +104,7 @@ func (pc *ProductController) Get(c *fiber.Ctx) error {
 // @Failure 500 {object} exceptions.ErrorResponseException
 // @Router /product [get]
 func (pc *ProductController) GetAll(c *fiber.Ctx) error {
-	products, err := pc.service.GetProducts()
+	products, err := pc.service.GetAll()
 
 	if err != nil {
 		return err
@@ -127,7 +126,7 @@ func (pc *ProductController) Update(c *fiber.Ctx) error {
 	}
 	product.ProductId = uid
 
-	if err := pc.service.UpdateProduct(product); err != nil {
+	if err := pc.service.Update(product); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.JSON(product)
@@ -135,7 +134,7 @@ func (pc *ProductController) Update(c *fiber.Ctx) error {
 
 func (pc *ProductController) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
-	if err := pc.service.DeleteProduct(id); err != nil {
+	if err := pc.service.Delete(id); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.SendStatus(fiber.StatusNoContent)

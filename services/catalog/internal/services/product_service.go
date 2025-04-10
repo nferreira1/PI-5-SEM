@@ -1,16 +1,16 @@
 package services
 
 import (
-	"github.com/nferreira1/PI-5-SEM/services/product/internal/models"
-	"github.com/nferreira1/PI-5-SEM/services/product/internal/repositories"
+	"github.com/nferreira1/PI-5-SEM/services/catalog/internal/models"
+	"github.com/nferreira1/PI-5-SEM/services/catalog/internal/repositories"
 )
 
 type ProductService interface {
-	CreateProduct(product *models.Product) error
-	GetProduct(id string) (*models.Product, error)
-	GetProducts() ([]models.Product, error)
-	UpdateProduct(product *models.Product) error
-	DeleteProduct(id string) error
+	Create(product *models.Product) error
+	GetById(productId string) (*models.Product, error)
+	GetAll() ([]models.Product, error)
+	Update(product *models.Product) error
+	Delete(productId string) error
 }
 
 type productService struct {
@@ -21,22 +21,22 @@ func NewProductService(repo repositories.ProductRepository) ProductService {
 	return &productService{repo: repo}
 }
 
-func (ps *productService) CreateProduct(product *models.Product) error {
+func (ps *productService) Create(product *models.Product) error {
 	return ps.repo.Create(product)
 }
 
-func (ps *productService) GetProduct(id string) (*models.Product, error) {
-	return ps.repo.GetByID(id)
+func (ps *productService) GetById(productId string) (*models.Product, error) {
+	return ps.repo.GetById(productId)
 }
 
-func (ps *productService) GetProducts() ([]models.Product, error) {
+func (ps *productService) GetAll() ([]models.Product, error) {
 	return ps.repo.GetAll()
 }
 
-func (ps *productService) UpdateProduct(product *models.Product) error {
+func (ps *productService) Update(product *models.Product) error {
 	return ps.repo.Update(product)
 }
 
-func (ps *productService) DeleteProduct(id string) error {
-	return ps.repo.Delete(id)
+func (ps *productService) Delete(productId string) error {
+	return ps.repo.Delete(productId)
 }

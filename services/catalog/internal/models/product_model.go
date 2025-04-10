@@ -14,7 +14,7 @@ type ProductRequest struct {
 	Name        string                 `json:"name"`
 	Description string                 `json:"description"`
 	Price       float64                `json:"price"`
-	Category    string                 `json:"category"`
+	Category    string                 `json:"categoryId"`
 	Stock       int                    `json:"stock"`
 	Images      []ProductImagesRequest `json:"images"`
 }
@@ -25,11 +25,11 @@ type Product struct {
 	Name        string          `gorm:"size:100;not null" json:"name"`
 	Description string          `gorm:"size:500" json:"description"`
 	Price       float64         `gorm:"not null" json:"price"`
-	Category    string          `gorm:"not null" json:"category"`
 	Stock       int             `gorm:"not null" json:"stock"`
 	CreatedAt   time.Time       `gorm:"autoCreateTime" json:"createdAt"`
 	UpdatedAt   time.Time       `gorm:"autoUpdateTime" json:"updatedAt"`
 	Images      []ProductImages `gorm:"foreignKey:ProductId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"images"`
+	CategoryId  uuid.UUID       `gorm:"type:uuid;not null" json:"categoryId"`
 }
 
 func (p *Product) BeforeCreate(tx *gorm.DB) (err error) {

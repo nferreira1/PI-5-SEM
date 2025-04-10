@@ -2,7 +2,7 @@ package configs
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/nferreira1/PI-5-SEM/services/product/internal/models"
+	"github.com/nferreira1/PI-5-SEM/services/catalog/internal/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -10,6 +10,7 @@ import (
 var DB *gorm.DB
 
 func LoadORMConfig() error {
+
 	env := GetEnv()
 	dsn := ""
 
@@ -22,8 +23,7 @@ func LoadORMConfig() error {
 		return fiber.NewError(fiber.StatusInternalServerError, "Ocorreu um erro inesperado ao conectar com o banco de dados!")
 	}
 
-	if err := db.AutoMigrate(&models.Product{}, models.ProductImages{}); err != nil {
-		print(err)
+	if err := db.AutoMigrate(models.Category{}, models.Product{}, models.ProductImages{}); err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Falha ao migrar o banco de dados!")
 	}
 
