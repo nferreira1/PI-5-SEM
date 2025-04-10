@@ -2,6 +2,9 @@ FROM eclipse-temurin:17-jdk-alpine AS builder
 
 WORKDIR /app
 
+ARG JAVA_ENV
+ENV JAVA_ENV=${JAVA_ENV}
+
 COPY services/identity . 
 
 RUN chmod +x ./mvnw
@@ -20,4 +23,4 @@ EXPOSE 8080
 
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
 
-CMD ["sh", "-c", "java $JAVA_OPTS -jar app.jar --spring.profiles.active=production"]
+CMD ["sh", "-c", "java $JAVA_OPTS -jar app.jar --spring.profiles.active=${JAVA_ENV}"]

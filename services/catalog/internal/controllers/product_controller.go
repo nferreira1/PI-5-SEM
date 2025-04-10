@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/nferreira1/PI-5-SEM/services/catalog/internal/models"
 	"github.com/nferreira1/PI-5-SEM/services/catalog/internal/services"
@@ -82,9 +81,9 @@ func (pc *ProductController) Post(c *fiber.Ctx) error {
 // @Failure 500 {object} exceptions.ErrorResponseException
 // @Router /product/{productId} [get]
 func (pc *ProductController) Get(c *fiber.Ctx) error {
-	id := c.Params("productId")
+	productId := c.Params("productId")
 
-	product, err := pc.service.GetById(id)
+	product, err := pc.service.GetById(productId)
 
 	if err != nil {
 		return fiber.NewError(fiber.StatusNotFound, "Produto não encontrado.")
@@ -99,7 +98,7 @@ func (pc *ProductController) Get(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {object} models.Product
+// @Success 200 {array} models.Product
 // @Failure 400 {object} exceptions.ErrorResponseException
 // @Failure 500 {object} exceptions.ErrorResponseException
 // @Router /product [get]
@@ -111,31 +110,4 @@ func (pc *ProductController) GetAll(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(products)
-}
-
-func (pc *ProductController) Update(c *fiber.Ctx) error {
-	id := c.Params("id")
-	product := new(models.Product)
-	if err := c.BodyParser(product); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-
-	uid, parseErr := uuid.Parse(id)
-	if parseErr != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID inválido"})
-	}
-	product.ProductId = uid
-
-	if err := pc.service.Update(product); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	return c.JSON(product)
-}
-
-func (pc *ProductController) Delete(c *fiber.Ctx) error {
-	id := c.Params("id")
-	if err := pc.service.Delete(id); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	return c.SendStatus(fiber.StatusNoContent)
 }

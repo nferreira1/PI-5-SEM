@@ -8,6 +8,7 @@ import (
 type CategoryRepository interface {
 	Create(category *models.Category) error
 	GetById(categoryId string) (*models.Category, error)
+	GetByCategoryId(categoryId string) (*[]models.Product, error)
 	GetAll() ([]models.Category, error)
 	Update(category *models.Category) error
 	Delete(categoryId string) error
@@ -33,6 +34,16 @@ func (cr *categoryRepository) GetById(categoryId string) (*models.Category, erro
 	}
 
 	return &category, nil
+}
+
+func (cr *categoryRepository) GetByCategoryId(categoryId string) (*[]models.Product, error) {
+	var products []models.Product
+
+	if err := cr.db.Preload("Images").Where("category_id = ?", categoryId).Find(&products).Error; err != nil {
+		return nil, err
+	}
+
+	return &products, nil
 }
 
 func (cr *categoryRepository) GetAll() ([]models.Category, error) {

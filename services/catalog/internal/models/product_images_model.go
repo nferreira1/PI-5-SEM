@@ -21,9 +21,9 @@ type ProductImages struct {
 	ProductId      uuid.UUID `gorm:"type:uuid;not null" json:"productId"`
 }
 
-func (pi ProductImagesRequest) Validate() error {
-	return validation.ValidateStruct(&pi,
-		validation.Field(&pi.Base64,
+func (pir ProductImagesRequest) Validate() error {
+	return validation.ValidateStruct(&pir,
+		validation.Field(&pir.Base64,
 			validation.Required.Error("A imagem é obrigatória."),
 			is.Base64.Error("A imagem é inválida."),
 		),

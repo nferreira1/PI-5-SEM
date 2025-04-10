@@ -82,6 +82,7 @@ func loadEnv() (*Environment, error) {
 	if len(missingVars) > 0 {
 		return nil, fmt.Errorf("missing required environment variables: \n%s", strings.Join(missingVars, "\n"))
 	}
+
 	return env, nil
 }
 

@@ -1,6 +1,9 @@
 package main
 
 import (
+	"log"
+	"os"
+
 	"github.com/nferreira1/PI-5-SEM/services/catalog/internal/configs"
 	"github.com/nferreira1/PI-5-SEM/services/catalog/internal/routers"
 )
@@ -16,7 +19,12 @@ import (
 // @in header
 // @name Authorization
 func main() {
-	configs.LoadEnvFile("../../.env.development")
+	if os.Getenv("GO_ENV") != "production" && os.Getenv("GO_ENV") != "production.local" {
+		configs.LoadEnvFile("../../.env.development")
+	} else {
+		log.Println("Rodando em produção, utilizando as variáveis de ambiente já definidas")
+	}
+
 	configs.LoadORMConfig()
 	routers.Initialize()
 }

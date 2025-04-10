@@ -1,6 +1,8 @@
 package configs
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/nferreira1/PI-5-SEM/services/catalog/internal/models"
 	"gorm.io/driver/postgres"
@@ -14,8 +16,15 @@ func LoadORMConfig() error {
 	env := GetEnv()
 	dsn := ""
 
+	print(env.GoEnv)
+
 	if env.GoEnv == "development" {
-		dsn = "host=localhost user=postgres password=postgres dbname=product_service_db_test port=5432 sslmode=disable TimeZone=UTC"
+		dsn = "host=localhost user=postgres password=postgres dbname=catalog_service_db_test port=5432 sslmode=disable TimeZone=UTC"
+	}
+
+	if env.GoEnv == "production.local" {
+		dsn = fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable TimeZone=UTC",
+			"catalog-db", env.CatalogDbUser, env.CatalogDbPass, env.CatalogDbName)
 	}
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})

@@ -83,15 +83,43 @@ func (cc *CategoryController) Post(c *fiber.Ctx) error {
 // @Failure 500 {object} exceptions.ErrorResponseException
 // @Router /category/{categoryId} [get]
 func (cc *CategoryController) Get(c *fiber.Ctx) error {
-	id := c.Params("categoryId")
+	categoryId := c.Params("categoryId")
 
-	category, err := cc.service.GetById(id)
+	category, err := cc.service.GetById(categoryId)
 
 	if err != nil {
 		return fiber.NewError(fiber.StatusNotFound, "Categoria não encontrada.")
 	}
 
-	return c.JSON(category)
+	categoryRes := models.CategoryResponse{}
+	if err := copier.Copy(&categoryRes, category); err != nil {
+		return err
+	}
+
+	return c.JSON(categoryRes)
+}
+
+// GetByCategoryId godoc
+// @Summary Get all products by category ID
+// @Tags Categories
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param categoryId path string true "Category ID"
+// @Success 200 {array} models.Product
+// @Failure 400 {object} exceptions.ErrorResponseException
+// @Failure 404 {object} exceptions.ErrorResponseException
+// @Failure 500 {object} exceptions.ErrorResponseException
+// @Router /category/{categoryId}/products [get]
+func (cc *CategoryController) GetByCategoryId(c *fiber.Ctx) error {
+	categoryId := c.Params("categoryId")
+
+	products, err := cc.service.GetByCategoryId(categoryId)
+	if err != nil {
+		return fiber.NewError(fiber.StatusNotFound, "Produtos não encontrados para esta categoria.")
+	}
+
+	return c.JSON(products)
 }
 
 // GetCategories godoc
@@ -100,12 +128,11 @@ func (cc *CategoryController) Get(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {object} models.CategoryResponse
+// @Success 200 {array} models.CategoryResponse
 // @Failure 400 {object} exceptions.ErrorResponseException
 // @Failure 500 {object} exceptions.ErrorResponseException
 // @Router /category [get]
 func (cc *CategoryController) GetAll(c *fiber.Ctx) error {
-
 	categories, err := cc.service.GetAll()
 
 	categoriesRes := []models.CategoryResponse{}
@@ -119,30 +146,3 @@ func (cc *CategoryController) GetAll(c *fiber.Ctx) error {
 
 	return c.JSON(categoriesRes)
 }
-
-// func (cc *CategoryController) Update(c *fiber.Ctx) error {
-// 	id := c.Params("id")
-// 	product := new(models.Product)
-// 	if err := c.BodyParser(product); err != nil {
-// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-// 	}
-
-// 	uid, parseErr := uuid.Parse(id)
-// 	if parseErr != nil {
-// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID inválido"})
-// 	}
-// 	product.ProductId = uid
-
-// 	if err := cc.service.Update(product); err != nil {
-// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-// 	}
-// 	return c.JSON(product)
-// }
-
-// func (cc *CategoryController) Delete(c *fiber.Ctx) error {
-// 	id := c.Params("id")
-// 	if err := cc.service.Delete(id); err != nil {
-// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-// 	}
-// 	return c.SendStatus(fiber.StatusNoContent)
-// }

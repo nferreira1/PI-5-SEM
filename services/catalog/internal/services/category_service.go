@@ -8,6 +8,7 @@ import (
 type CategoryService interface {
 	Create(category *models.Category) error
 	GetById(categoryId string) (*models.Category, error)
+	GetByCategoryId(categoryId string) (*[]models.Product, error)
 	GetAll() ([]models.Category, error)
 	Update(category *models.Category) error
 	Delete(categoryId string) error
@@ -27,6 +28,10 @@ func (cs *categoryService) Create(category *models.Category) error {
 
 func (cs *categoryService) GetById(categoryId string) (*models.Category, error) {
 	return cs.repo.GetById(categoryId)
+}
+
+func (cs *categoryService) GetByCategoryId(categoryId string) (*[]models.Product, error) {
+	return cs.repo.GetByCategoryId(categoryId)
 }
 
 func (cs *categoryService) GetAll() ([]models.Category, error) {

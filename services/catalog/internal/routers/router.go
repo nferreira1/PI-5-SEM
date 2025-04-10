@@ -42,8 +42,7 @@ func Initialize() {
 			categories.Get("/", categoryController.GetAll)
 			categories.Post("/", categoryController.Post)
 			categories.Get("/:categoryId", categoryController.Get)
-			// categories.Put("/:categoryId", categoryController.Update)
-			// categories.Delete("/:categoryId", categoryController.Delete)
+			categories.Get("/:categoryId/products", categoryController.GetByCategoryId)
 		}
 
 		products := catalog.Group("/product")
@@ -51,8 +50,6 @@ func Initialize() {
 			products.Get("/", productController.GetAll)
 			products.Post("/", productController.Post)
 			products.Get("/:productId", productController.Get)
-			products.Put("/:productId", productController.Update)
-			products.Delete("/:productId", productController.Delete)
 
 		}
 	}
