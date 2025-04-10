@@ -1,5 +1,13 @@
 import { AuthProvider } from "@/hooks";
-import { Home, NonAuthLayout, SignIn, SignUp } from "@/pages";
+import {
+	Categories,
+	Category,
+	Home,
+	NonAuthLayout,
+	Product,
+	SignIn,
+	SignUp,
+} from "@/pages";
 import { BrowserRouter, Route, Routes as RouterRoutes } from "react-router";
 
 export function Routes() {
@@ -9,6 +17,15 @@ export function Routes() {
 				<Route element={<AuthProvider />}>
 					<Route element={<NonAuthLayout />}>
 						<Route path="/" element={<Home />} />
+						<Route path="/categories" element={<Categories />} />
+						<Route
+							path="/categories/:categoryId"
+							element={<Category />}
+						/>
+						<Route
+							path="/products/:productId"
+							element={<Product />}
+						/>
 						<Route path="/sign-in" element={<SignIn />} />
 						<Route path="/sign-up" element={<SignUp />} />
 					</Route>

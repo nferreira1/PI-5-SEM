@@ -33,7 +33,7 @@ export function Header() {
 						className="text-base hover:bg-transparent"
 						asChild
 					>
-						<Link to="/categorias">Categorias</Link>
+						<Link to="/categories">Categorias</Link>
 					</Button>
 				</div>
 
