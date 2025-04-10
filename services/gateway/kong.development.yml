@@ -33,3 +33,13 @@ services:
                 - POST
                 - OPTIONS
             strip_path: false
+    - name: catalog
+      url: http://host.docker.internal:8081
+      routes:
+          - name: catalog-docs
+            paths:
+                - /catalog/api-docs
+            methods:
+                - GET
+                - OPTIONS
+            strip_path: false 

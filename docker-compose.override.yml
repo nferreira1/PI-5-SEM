@@ -25,7 +25,7 @@ services:
               sleep infinity
             "
         volumes:
-            - ./infra/iac/main.tf:/workspace/main.tf
+            - ./infra/iac/main.development.tf:/workspace/main.tf
             - ./infra/iac/backend.development.tf:/workspace/backend.tf
             - ./infra/iac/variables.tf:/workspace/variables.tf
             - ./infra/iac/provider.tf:/workspace/provider.tf
