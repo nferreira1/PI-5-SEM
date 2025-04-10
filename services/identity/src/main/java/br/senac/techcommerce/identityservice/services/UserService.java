@@ -42,7 +42,7 @@ public class UserService {
 
         var userSaved = this.userRepository.save(user);
 
-        this.sqsProducerService.send("nathan@circulomilitar.com.br", "Boas vindas",
+        this.sqsProducerService.send(userSaved.getEmail(), "Boas vindas",
                 "Seja bem-vindo ao TechCommerce!");
 
         return userSaved;

@@ -10,13 +10,16 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 @Service
 public class SQSProducerService {
 
-    @Value("${spring.cloud.aws.sqs.queue-name}")
+    @Value("${spring.cloud.aws.sqs.queue-url}")
     private String queueUrl;
 
     @Autowired
     private SqsAsyncClient sqsClient;
 
     public void send(String to, String subject, String html) {
+
+        System.out.println("queueUrl: " + queueUrl);
+
         String message = String.format("{\"to\":\"%s\",\"subject\":\"%s\",\"html\":\"%s\"}", to, subject, html);
 
         SendMessageRequest request = SendMessageRequest.builder()

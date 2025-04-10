@@ -29,14 +29,14 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
 		port: 587,
 		secure: false,
 		auth: {
-			user: env.EMAIL_USER,
-			pass: env.EMAIL_PASS,
+			user: env.EMAIL_SERVICE_EMAIL_USER,
+			pass: env.EMAIL_SERVICE_EMAIL_PASS,
 		},
 	});
 
 	try {
 		const info = await transporter.sendMail({
-			from: `Techcommerce <${env.EMAIL_USER}>`,
+			from: `Techcommerce <${env.EMAIL_SERVICE_EMAIL_USER}>`,
 			to,
 			subject,
 			html,

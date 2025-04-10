@@ -11,8 +11,8 @@ const envVariables = z.object({
 	AWS_SECRET_ACCESS_KEY: z.string(),
 	AWS_DEFAULT_REGION: z.string(),
 	EMAIL_SERVICE_QUEUE_URL: z.string(),
-	EMAIL_USER: z.string(),
-	EMAIL_PASS: z.string(),
+	EMAIL_SERVICE_EMAIL_USER: z.string(),
+	EMAIL_SERVICE_EMAIL_PASS: z.string(),
 });
 
 const { error } = envVariables.safeParse(Bun.env);
