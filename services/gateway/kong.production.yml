@@ -1,35 +1,73 @@
 _format_version: "3.0"
 services:
-    - name: identity
-      url: http://identity-service:8080
-      routes:
-          - name: identity-docs
-            paths:
-                - /identity/api-docs
-            methods:
-                - GET
-                - OPTIONS
-            strip_path: false
-          - name: identity-login
-            paths:
-                - /identity/auth/login
-            methods:
-                - POST
-                - OPTIONS
-            strip_path: false
-          - name: identity-user
-            paths:
-                - /identity/user
-            methods:
-                - POST
-                - OPTIONS
-            strip_path: false
-          - name: identity-address
-            paths:
-                - /identity/address
-            methods:
-                - GET
-                - PUT
-                - POST
-                - OPTIONS
-            strip_path: false
+  - name: identity
+    url: http://host.docker.internal:8080
+    routes:
+      - name: identity-api-docs
+        paths:
+          - /identity/api-docs
+        methods: [GET, OPTIONS]
+        strip_path: false
+
+      - name: identity-auth-login
+        paths:
+          - /identity/auth/login
+        methods: [POST, OPTIONS]
+        strip_path: false
+
+      - name: identity-user-create
+        paths:
+          - /identity/user
+        methods: [POST, OPTIONS]
+        strip_path: false
+
+      - name: identity-address-crud
+        paths:
+          - /identity/address
+        methods: [GET, PUT, POST, OPTIONS]
+        strip_path: false
+
+  - name: catalog
+    url: http://host.docker.internal:8081
+    routes:
+      - name: catalog-api-docs
+        paths:
+          - /catalog/api-docs
+        methods: [GET, OPTIONS]
+        strip_path: false
+
+      - name: catalog-category-list
+        paths:
+          - /catalog/category
+        methods: [GET]
+        strip_path: false
+
+      - name: catalog-category-create
+        paths:
+          - /catalog/category
+        methods: [POST]
+        strip_path: false
+
+      - name: catalog-category-get-by-id
+        paths:
+          - /catalog/category/{categoryId}
+        methods: [GET]
+        strip_path: false
+
+      - name: catalog-product-list
+        paths:
+          - /catalog/product
+        methods: [GET]
+        strip_path: false
+
+      - name: catalog-product-create
+        paths:
+          - /catalog/product
+        methods: [POST]
+        strip_path: false
+
+      - name: catalog-product-get-by-id
+        paths:
+          - /catalog/product/{productId}
+        methods: [GET]
+        strip_path: false

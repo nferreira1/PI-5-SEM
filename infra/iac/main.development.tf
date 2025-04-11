@@ -44,5 +44,5 @@ output "bucket_terraform" {
 }
 
 output "bucket_products_images" {
-  value = aws_s3_bucket.bucket_products_images.url
+  value = aws_s3_bucket.bucket_products_images.id
 }
