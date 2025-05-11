@@ -1,7 +1,7 @@
 import { useLocalStorage } from "@/hooks";
 import { jwtDecode } from "jwt-decode";
-import { createContext, useContext, useState } from "react";
-import { Outlet, useNavigate } from "react-router";
+import { createContext, useContext, useEffect, useState } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router";
 
 export type User = Schema["UserEntity_List"];
 
@@ -16,8 +16,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider() {
 	const navigate = useNavigate();
-	const [user, setUser] = useState<User>();
+	const location = useLocation();
 	const [token, setToken, removeToken] = useLocalStorage("auth", "");
+	const [user, setUser] = useState<User | undefined>(
+		token ? jwtDecode<User>(token) : undefined,
+	);
 
 	const login = (token: string) => {
 		setToken(token);
@@ -27,6 +30,19 @@ export function AuthProvider() {
 	const logout = () => {
 		removeToken();
 	};
+
+	useEffect(() => {
+		const isAuthPage =
+			location.pathname === "/sign-in" ||
+			location.pathname === "/sign-up";
+		const isOrdersPage = location.pathname === "/orders";
+
+		if (!user && isOrdersPage) {
+			navigate("/sign-in");
+		} else if (user && isAuthPage) {
+			navigate("/");
+		}
+	}, [location.pathname, navigate, user]);
 
 	return (
 		<AuthContext.Provider

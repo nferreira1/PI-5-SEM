@@ -25,8 +25,8 @@ export function SheetMenu() {
 	const { logout } = useAuth();
 
 	const links = [
-		{ href: "/perfil", label: "Perfil", icon: User2 },
-		{ href: "/meus-pedidos", label: "Meus pedidos", icon: ListOrdered },
+		// { href: "/perfil", label: "Perfil", icon: User2 },
+		{ href: "/orders", label: "Meus pedidos", icon: ListOrdered },
 	];
 
 	return (

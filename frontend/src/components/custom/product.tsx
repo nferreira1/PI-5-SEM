@@ -31,10 +31,10 @@ export function Product({ product }: { product: Schema["models.Product"] }) {
 					</span>
 					<div className="flex items-baseline gap-1">
 						<span className="font-semibold lg:text-lg">
-							{product.price}
+							R$ {product.price}
 						</span>
 						<span className="text-muted-foreground text-xs line-through lg:text-sm">
-							{product.price}
+							R$ {product.price}
 						</span>
 					</div>
 					<div className="flex items-center gap-0.5">

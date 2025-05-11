@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/hooks";
 import { ChevronLeft, ChevronRight, Star, Truck } from "lucide-react";
 import { useState } from "react";
 
@@ -7,6 +8,7 @@ export function ProductDetails({
 }: {
 	product: Schema["models.Product"] | undefined;
 }) {
+	const { add } = useCart();
 	const [amount, setAmount] = useState<number>(1);
 
 	const handleAmount = (value: 1 | -1) => {
@@ -40,9 +42,9 @@ export function ProductDetails({
 			</div>
 
 			<div>
-				<h6 className="text-2xl font-bold">{product?.price}</h6>
+				<h6 className="text-2xl font-bold">R$ {product?.price}</h6>
 				<span className="text-muted-foreground text-sm">
-					De:
+					De: R$
 					<span className="line-through"> {product?.price}</span>
 				</span>
 			</div>
@@ -76,7 +78,17 @@ export function ProductDetails({
 				</p>
 			</div>
 
-			<Button size="lg">ADICIONAR AO CARRINHO</Button>
+			<Button
+				size="lg"
+				onClick={() =>
+					add({
+						product: product as Schema["models.Product"],
+						amount,
+					})
+				}
+			>
+				ADICIONAR AO CARRINHO
+			</Button>
 
 			<div className="bg-muted md:bg-accent flex items-center gap-x-6 rounded-xl px-6 py-4">
 				<Truck size={30} />

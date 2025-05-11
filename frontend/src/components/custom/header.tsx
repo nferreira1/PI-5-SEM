@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks";
 import { ShoppingCart, User2 } from "lucide-react";
 import { Link } from "react-router";
+import { SheetCart } from "./sheet-cart";
 
 export function Header() {
 	const { user } = useAuth();
@@ -47,7 +48,7 @@ export function Header() {
 					) : (
 						<SheetMenu />
 					)}
-					<Link to="/carrinho">
+					<Link to="/cart">
 						<Button
 							variant="outline"
 							size="icon"
@@ -57,7 +58,7 @@ export function Header() {
 						</Button>
 					</Link>
 
-					{/* <SheetCarrinho /> */}
+					<SheetCart />
 				</div>
 			</div>
 		</header>
