@@ -18,7 +18,7 @@ logger = logging.getLogger("seed_script")
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("PIL").setLevel(logging.WARNING)
 
-API_BASE = "http://localhost:8000"
+API_BASE = "http://kong:8000"
 
 def convert_image_to_base64(image_path, output_format='JPEG', quality=70, max_size=(800, 800)):
     with Image.open(image_path) as img:
@@ -31,9 +31,7 @@ def convert_image_to_base64(image_path, output_format='JPEG', quality=70, max_si
         else:
             resample_method = Image.ANTIALIAS
 
-        
         img.thumbnail(max_size, resample_method)
-
         
         buffered = io.BytesIO()
         if output_format == "PNG":

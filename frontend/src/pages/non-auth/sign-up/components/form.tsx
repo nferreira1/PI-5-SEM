@@ -80,9 +80,9 @@ export default function Form() {
 					toast.success("Sucesso!", {
 						description: "Sua conta foi criada com sucesso.",
 					});
-					navigate("/sign-in", {
-						state: { email: data.email },
-					});
+					// navigate("/sign-in", {
+					// 	state: { email: data.email },
+					// });
 				},
 			},
 		);

@@ -13,7 +13,6 @@ services:
             EMAIL_SERVICE_QUEUE_URL: ${EMAIL_SERVICE_QUEUE_URL}
             EMAIL_SERVICE_EMAIL_USER: ${EMAIL_SERVICE_EMAIL_USER}
             EMAIL_SERVICE_EMAIL_PASS: ${EMAIL_SERVICE_EMAIL_PASS}
-        command: ["bun", "run", "dist/index.js"]
 
     identity-db:
         image: postgres:15

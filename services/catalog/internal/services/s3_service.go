@@ -5,6 +5,8 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"log"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -19,45 +21,64 @@ func UploadImageToS3(ctx context.Context, base64Image string) (string, error) {
 
 	env := configs.GetEnv()
 
-	data, err := base64.StdEncoding.DecodeString(base64Image)
+	endpoint := env.AwsS3Endpoint
+	region := env.AwsDefaultRegion
+	bucket := env.AwsBucket
+	creds := credentials.NewStaticCredentialsProvider(
+		env.AwsAccessKeyId,
+		env.AwsSecretAccessKey,
+		"",
+	)
+
+	parts := strings.SplitN(base64Image, ",", 2)
+	raw := base64Image
+	if len(parts) == 2 {
+		raw = parts[1]
+	}
+	data, err := base64.StdEncoding.DecodeString(raw)
 	if err != nil {
-		return "", fiber.NewError(fiber.StatusInternalServerError, "Erro ao decodificar a imagem, tente novamente.")
+		return "", fiber.NewError(fiber.StatusInternalServerError, "erro ao decodificar imagem")
 	}
 
 	cfg, err := config.LoadDefaultConfig(ctx,
-		config.WithBaseEndpoint(env.AwsS3Endpoint),
-		config.WithRegion(env.AwsDefaultRegion),
-		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(env.AwsAccessKeyId, env.AwsSecretAccessKey, "")),
+		config.WithRegion(region),
+		config.WithCredentialsProvider(creds),
+		config.WithEndpointResolver(aws.EndpointResolverFunc(func(service, rgn string) (aws.Endpoint, error) {
+			if service == s3.ServiceID {
+				return aws.Endpoint{
+					URL:               endpoint,
+					SigningRegion:     region,
+					HostnameImmutable: true,
+				}, nil
+			}
+			return aws.Endpoint{}, &aws.EndpointNotFoundError{}
+		})),
 	)
 	if err != nil {
-		return "", fiber.NewError(fiber.StatusInternalServerError, "Erro ao carregar configuração AWS, tente novamente.")
+		return "", fiber.NewError(fiber.StatusInternalServerError, "falha ao carregar configuração AWS/LocalStack")
 	}
 
-	client := s3.NewFromConfig(cfg)
+	client := s3.NewFromConfig(cfg, func(o *s3.Options) {
+		o.UsePathStyle = true
+	})
 
-	key := fmt.Sprintf("%d.jpg", time.Now().UnixNano())
-
-	input := &s3.PutObjectInput{
-		Bucket: aws.String(env.AwsBucket),
-		Key:    aws.String(key),
-		Body:   bytes.NewReader(data),
+	contentType := "image/png"
+	if len(data) >= 3 && data[0] == 0xFF && data[1] == 0xD8 && data[2] == 0xFF {
+		contentType = "image/jpeg"
 	}
 
-	_, err = client.PutObject(ctx, input)
+	key := fmt.Sprintf("%d", time.Now().UnixNano())
+	_, err = client.PutObject(ctx, &s3.PutObjectInput{
+		Bucket:      aws.String(bucket),
+		Key:         aws.String(key),
+		Body:        bytes.NewReader(data),
+		ContentType: aws.String(contentType),
+	})
 	if err != nil {
-		print(err.Error())
-		return "", fiber.NewError(fiber.StatusInternalServerError, "Erro ao fazer upload da imagem, tente novamente.")
+		log.Printf("falha no PutObject: %v", err)
+		return "", fiber.NewError(fiber.StatusInternalServerError, "erro ao fazer upload da imagem")
 	}
 
-	url := ""
-
-	if env.GoEnv == "development" {
-		url = fmt.Sprintf("%s/%s/%s", env.AwsS3Endpoint, env.AwsBucket, key)
-
-		return url, nil
-	}
-
-	url = fmt.Sprintf("https://%s.s3.amazonaws.com/%s", env.AwsBucket, key)
-
+	url := fmt.Sprintf("%s/%s/%s", strings.TrimSuffix(endpoint, "/"), bucket, key)
 	return url, nil
 }

@@ -1,7 +1,7 @@
 services:
-    kong-database:
+    kong-db:
         image: postgres:15
-        container_name: kong-database
+        container_name: kong-db
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -U kong -d kong"]
             interval: 5s
@@ -20,11 +20,11 @@ services:
         image: kong/kong-gateway:3.9.0.1
         container_name: kong
         depends_on:
-            kong-database:
+            kong-db:
                 condition: service_healthy
         environment:
             KONG_DATABASE: postgres
-            KONG_PG_HOST: kong-database
+            KONG_PG_HOST: kong-db
             KONG_PG_PASSWORD: kong
             KONG_PG_DATABASE: kong
             KONG_PROXY_ACCESS_LOG: /dev/stdout
@@ -50,14 +50,6 @@ services:
             sh -c "kong migrations bootstrap &&
                   kong config db_import /etc/kong/kong.yml &&
                   kong start"
-    # swagger: 
-    #     image: swaggerapi/swagger-ui
-    #     container_name: swagger
-    #     environment:
-    #         URL: http://host.docker.internal:8081/catalog/api-docs
-    #     ports:
-    #         - 80:8080
-
 
 networks:
     techcommerce-network:

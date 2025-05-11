@@ -4,7 +4,7 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"build": "tsc -b && vite build --mode production",
+		"build": "vite build --mode production",
 		"dev": "bun run gen-openapi.ts && openapi-typescript swagger.json -o ./src/api.d.ts && vite --host --mode development ",
 		"lint": "eslint .",
 		"preview": "vite preview --host"

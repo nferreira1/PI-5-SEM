@@ -8,4 +8,4 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY main.py ./
 COPY images ./images
 
-CMD ["python", "main.py"]
+CMD ["sh", "-c", "python main.py && tail -f /dev/null"]

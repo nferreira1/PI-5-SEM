@@ -1,0 +1,202 @@
+services:
+    aws:
+        image: localstack/localstack:4.3.0
+        container_name: aws
+        volumes:
+            - localstack_data:/var/lib/localstack
+        environment:
+            - GATEWAY_LISTEN=0.0.0.0:4566
+        ports:
+            - 4566:4566
+        networks:
+            - aws-network
+
+    terraform:
+        image: hashicorp/terraform:1.11
+        container_name: terraform
+        depends_on:
+            - aws
+        working_dir: /workspace
+        entrypoint: ["/bin/sh", "-c"]
+        command: >
+            "
+              terraform init \ &&
+              terraform apply -auto-approve \ &&
+              sleep infinity
+            "
+        volumes:
+            - ./infra/iac/main.development.tf:/workspace/main.tf
+            - ./infra/iac/backend.development.tf:/workspace/backend.tf
+            - ./infra/iac/variables.tf:/workspace/variables.tf
+            - ./infra/iac/provider.tf:/workspace/provider.tf
+            - ./.env.production.local:/workspace/.env.development
+            - terraform_state:/workspace/.terraform
+            - terraform_data:/workspace
+        environment:
+            TF_VAR_AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            TF_VAR_AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+            TF_VAR_AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+            TF_VAR_EMAIL_SERVICE_QUEUE_NAME: ${EMAIL_SERVICE_QUEUE_NAME}
+            TF_VAR_AWS_ENDPOINT: http://aws:4566
+        networks:
+            - aws-network
+
+    email-service:
+        image: nferreira1/techcommerce/email-service:1.0.0
+        container_name: email-service
+        depends_on:
+            - terraform
+            - aws
+        build:
+            context: ./services/email
+            dockerfile: Dockerfile
+        environment:
+            AWS_SQS_QUEUE_ENDPOINT: ${AWS_SQS_QUEUE_ENDPOINT}
+            AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+            AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+            EMAIL_SERVICE_QUEUE_URL: ${EMAIL_SERVICE_QUEUE_URL}
+            EMAIL_SERVICE_EMAIL_USER: ${EMAIL_SERVICE_EMAIL_USER}
+            EMAIL_SERVICE_EMAIL_PASS: ${EMAIL_SERVICE_EMAIL_PASS}
+        networks:
+            - aws-network
+
+    identity-db:
+        image: postgres:15
+        container_name: identity-db
+        healthcheck:
+            test: ["CMD", "pg_isready", "-U", "${IDENTITY_DB_USER}"]
+            interval: 10s
+            retries: 5
+            start_period: 5s
+        environment:
+            POSTGRES_USER: ${IDENTITY_DB_USER}
+            POSTGRES_PASSWORD: ${IDENTITY_DB_PASS}
+            POSTGRES_DB: ${IDENTITY_DB_NAME}
+        networks:
+            - identity-network
+        volumes:
+            - identity_db_data:/var/lib/postgresql/data
+
+    identity-service:
+        image: nferreira1/techcommerce/identity-service:1.0.0
+        container_name: identity-service
+        build:
+            context: .
+            dockerfile: ./services/identity/Dockerfile
+        depends_on:
+            identity-db:
+                condition: service_healthy
+        environment:
+            JAVA_ENV: production.local
+            AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+            AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+            AWS_SQS_QUEUE_ENDPOINT: ${AWS_SQS_QUEUE_ENDPOINT}
+            JWT_EXPIRATION_TIME_IN_MINUTES: ${JWT_EXPIRATION_TIME_IN_MINUTES}
+            EMAIL_SERVICE_QUEUE_URL: ${EMAIL_SERVICE_QUEUE_URL}
+            IDENTITY_DB_USER: ${IDENTITY_DB_USER}
+            IDENTITY_DB_PASS: ${IDENTITY_DB_PASS}
+            IDENTITY_DB_NAME: ${IDENTITY_DB_NAME}
+        networks:
+            - aws-network
+            - identity-network
+
+    catalog-db:
+        image: postgres:15
+        container_name: catalog-db
+        healthcheck:
+            test: ["CMD", "pg_isready", "-U", "${CATALOG_DB_USER}"]
+            interval: 10s
+            retries: 5
+            start_period: 5s
+        environment:
+            POSTGRES_USER: ${CATALOG_DB_USER}
+            POSTGRES_PASSWORD: ${CATALOG_DB_PASS}
+            POSTGRES_DB: ${CATALOG_DB_NAME}
+        networks:
+            - catalog-network
+        volumes:
+            - catalog_db_data:/var/lib/postgresql/data
+
+    catalog-service:
+        image: nferreira1/techcommerce/catalog-service:1.0.0
+        container_name: catalog-service
+        build:
+            context: .
+            dockerfile: ./services/catalog/Dockerfile
+        depends_on:
+            catalog-db:
+                condition: service_healthy
+        environment:
+            GO_ENV: production.local
+            CATALOG_DB_USER: ${CATALOG_DB_USER}
+            CATALOG_DB_PASS: ${CATALOG_DB_PASS}
+            CATALOG_DB_NAME: ${CATALOG_DB_NAME}
+            AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+            AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+            AWS_S3_ENDPOINT: ${AWS_S3_ENDPOINT}
+            CATALOG_SERVICE_AWS_BUCKET_NAME_PRODUCTS_IMAGES: ${CATALOG_SERVICE_AWS_BUCKET_NAME_PRODUCTS_IMAGES}
+        networks:
+            - aws-network
+            - catalog-network
+
+    kong:
+        depends_on:
+            - identity-service
+            - catalog-service
+        volumes:
+            - ./services/gateway/kong.production.local.yml:/etc/kong/kong.yml:ro
+        networks:
+            - identity-network
+            - catalog-network
+
+    seed:
+        image: nferreira1/techcommerce/seed-catalog-service:1.0.0
+        container_name: seed
+        build:
+          context: ./seed
+          dockerfile: Dockerfile
+        depends_on:
+          - kong
+        networks:
+          - kong-network
+    
+    frontend:
+        image: nferreira1/techcommerce/frontend:1.0.0
+        container_name: frontend
+        depends_on:
+            - kong
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+            args:
+                VITE_API_URL: ${VITE_API_URL}
+        ports:
+            - ${FRONTEND_PORT}:80
+        networks:
+            - techcommerce-network
+
+networks:
+    aws-network:
+        name: aws-network
+        driver: bridge
+    identity-network:
+        name: identity-network
+        driver: bridge
+    catalog-network:
+        name: catalog-network
+        driver: bridge
+
+volumes:
+    localstack_data:
+        name: localstack_data
+    terraform_state:
+        name: terraform_state
+    terraform_data:
+        name: terraform_data
+    identity_db_data:
+        name: identity_db_data
+    catalog_db_data:
+        name: catalog_db_data

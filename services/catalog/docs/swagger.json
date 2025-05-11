@@ -1,0 +1,615 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+      "title": "Catalog API",
+      "description": "API for the catalog management.",
+      "contact": {},
+      "version": "1.0"
+    },
+    "servers": [
+      {
+        "url": "//localhost:8081/catalog"
+      }
+    ],
+    "paths": {
+      "/category": {
+        "get": {
+          "tags": [
+            "Categories"
+          ],
+          "summary": "Get all categories",
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/models.CategoryResponse"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ]
+        },
+        "post": {
+          "tags": [
+            "Categories"
+          ],
+          "summary": "Create a new category",
+          "requestBody": {
+            "description": "Category data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/models.CategoryRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "201": {
+              "description": "Created",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/models.CategoryResponse"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "x-codegen-request-body-name": "category"
+        }
+      },
+      "/category/{categoryId}": {
+        "get": {
+          "tags": [
+            "Categories"
+          ],
+          "summary": "Get a category by ID",
+          "parameters": [
+            {
+              "name": "categoryId",
+              "in": "path",
+              "description": "Category ID",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/models.CategoryResponse"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ]
+        }
+      },
+      "/category/{categoryId}/products": {
+        "get": {
+          "tags": [
+            "Categories"
+          ],
+          "summary": "Get all products by category ID",
+          "parameters": [
+            {
+              "name": "categoryId",
+              "in": "path",
+              "description": "Category ID",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/models.Product"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ]
+        }
+      },
+      "/product": {
+        "get": {
+          "tags": [
+            "Products"
+          ],
+          "summary": "Get all products",
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/models.Product"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ]
+        },
+        "post": {
+          "tags": [
+            "Products"
+          ],
+          "summary": "Create a new product",
+          "requestBody": {
+            "description": "Product data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/models.ProductRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "201": {
+              "description": "Created",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/models.ProductRequest"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "x-codegen-request-body-name": "product"
+        }
+      },
+      "/product/{productId}": {
+        "get": {
+          "tags": [
+            "Products"
+          ],
+          "summary": "Get a product by ID",
+          "parameters": [
+            {
+              "name": "productId",
+              "in": "path",
+              "description": "Product ID",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/models.Product"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/exceptions.ErrorResponseException"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ]
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "exceptions.Error": {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        },
+        "exceptions.ErrorResponseException": {
+          "type": "object",
+          "properties": {
+            "errors": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/exceptions.Error"
+              }
+            },
+            "message": {
+              "type": "string"
+            },
+            "status": {
+              "type": "integer"
+            }
+          }
+        },
+        "models.CategoryRequest": {
+          "type": "object",
+          "properties": {
+            "base64": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "status": {
+              "type": "boolean"
+            }
+          }
+        },
+        "models.CategoryResponse": {
+          "type": "object",
+          "properties": {
+            "categoryId": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "updatedAt": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          }
+        },
+        "models.Product": {
+          "type": "object",
+          "properties": {
+            "categoryId": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "images": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/models.ProductImages"
+              }
+            },
+            "name": {
+              "type": "string"
+            },
+            "price": {
+              "type": "number"
+            },
+            "productId": {
+              "type": "string"
+            },
+            "status": {
+              "type": "boolean"
+            },
+            "stock": {
+              "type": "integer"
+            },
+            "updatedAt": {
+              "type": "string"
+            }
+          }
+        },
+        "models.ProductImages": {
+          "type": "object",
+          "properties": {
+            "createdAt": {
+              "type": "string"
+            },
+            "principal": {
+              "type": "boolean"
+            },
+            "productId": {
+              "type": "string"
+            },
+            "productImageId": {
+              "type": "integer"
+            },
+            "url": {
+              "type": "string"
+            }
+          }
+        },
+        "models.ProductImagesRequest": {
+          "type": "object",
+          "properties": {
+            "base64": {
+              "type": "string"
+            },
+            "principal": {
+              "type": "boolean"
+            }
+          }
+        },
+        "models.ProductRequest": {
+          "type": "object",
+          "properties": {
+            "categoryId": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "images": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/models.ProductImagesRequest"
+              }
+            },
+            "name": {
+              "type": "string"
+            },
+            "price": {
+              "type": "number"
+            },
+            "status": {
+              "type": "boolean"
+            },
+            "stock": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        "BearerAuth": {
+          "type": "apiKey",
+          "name": "Authorization",
+          "in": "header"
+        }
+      }
+    },
+    "x-original-swagger-version": "2.0"
+  }
