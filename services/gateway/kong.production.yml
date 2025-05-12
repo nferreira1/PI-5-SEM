@@ -1,7 +1,7 @@
 _format_version: "3.0"
 services:
   - name: identity
-    url: http://host.docker.internal:8080
+    url: http://identity-service:8080
     routes:
       - name: identity-api-docs
         paths:
@@ -28,7 +28,7 @@ services:
         strip_path: false
 
   - name: catalog
-    url: http://host.docker.internal:8081
+    url: http://catalog-service:8081
     routes:
       - name: catalog-api-docs
         paths:
@@ -70,4 +70,19 @@ services:
         paths:
           - /catalog/product/{productId}
         methods: [GET]
+        strip_path: false
+
+  - name: order
+    url: http://order-service:8082
+    routes:
+      - name: order-api-docs
+        paths:
+          - /order/api-docs
+        methods: [GET, OPTIONS]
+        strip_path: false
+
+      - name: order-order-handler
+        paths:
+          - /order/orders
+        methods: [GET, POST]
         strip_path: false
