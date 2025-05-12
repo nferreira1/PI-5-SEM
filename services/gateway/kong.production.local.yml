@@ -84,5 +84,5 @@ services:
       - name: order-order-handler
         paths:
           - /order/orders
-        methods: [GET, POST]
+        methods: [GET, POST, OPTIONS]
         strip_path: false

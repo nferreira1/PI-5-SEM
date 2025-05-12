@@ -195,6 +195,7 @@ services:
         depends_on:
             - identity-service
             - catalog-service
+            - order-service
         volumes:
             - ./services/gateway/kong.production.local.yml:/etc/kong/kong.yml:ro
         networks:
