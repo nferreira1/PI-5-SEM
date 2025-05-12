@@ -230,7 +230,7 @@ export function SheetCart() {
 									disabled={isPending}
 									onClick={handleCheckout}
 								>
-									{!isPending ? (
+									{isPending ? (
 										<Loader2 className="animate-spin" />
 									) : (
 										"FINALIZAR COMPRA"
