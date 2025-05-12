@@ -10,7 +10,13 @@ import {
 import { useAuth, useCart } from "@/hooks";
 import { $api } from "@/lib/api";
 import { query } from "@/lib/query";
-import { ChevronLeft, ChevronRight, ShoppingCart, Trash2 } from "lucide-react";
+import {
+	ChevronLeft,
+	ChevronRight,
+	Loader2,
+	ShoppingCart,
+	Trash2,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 
@@ -19,7 +25,7 @@ export function SheetCart() {
 	const { token } = useAuth();
 	const { cart, update, remove, removeAll } = useCart();
 
-	const { mutate } = $api.useMutation("post", "/order/orders");
+	const { mutate, isPending } = $api.useMutation("post", "/order/orders");
 
 	const handleCheckout = () => {
 		mutate(
@@ -220,8 +226,15 @@ export function SheetCart() {
 										</span>
 									</span>
 								</div>
-								<Button onClick={handleCheckout}>
-									FINALIZAR COMPRA
+								<Button
+									disabled={isPending}
+									onClick={handleCheckout}
+								>
+									{!isPending ? (
+										<Loader2 className="animate-spin" />
+									) : (
+										"FINALIZAR COMPRA"
+									)}
 								</Button>
 							</section>
 						</>
