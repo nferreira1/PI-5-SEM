@@ -37,6 +37,7 @@ services:
             TF_VAR_AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
             TF_VAR_AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
             TF_VAR_EMAIL_SERVICE_QUEUE_NAME: ${EMAIL_SERVICE_QUEUE_NAME}
+            TF_VAR_ORDER_SERVICE_QUEUE_NAME: ${ORDER_SERVICE_QUEUE_NAME}
             TF_VAR_AWS_ENDPOINT: http://aws:4566
         networks:
             - aws-network
@@ -73,6 +74,8 @@ services:
             POSTGRES_USER: ${IDENTITY_DB_USER}
             POSTGRES_PASSWORD: ${IDENTITY_DB_PASS}
             POSTGRES_DB: ${IDENTITY_DB_NAME}
+        ports:
+            - 5432:5432
         networks:
             - identity-network
         volumes:
@@ -114,6 +117,8 @@ services:
             POSTGRES_USER: ${CATALOG_DB_USER}
             POSTGRES_PASSWORD: ${CATALOG_DB_PASS}
             POSTGRES_DB: ${CATALOG_DB_NAME}
+        ports:
+            - 5433:5432
         networks:
             - catalog-network
         volumes:
@@ -142,6 +147,49 @@ services:
             - aws-network
             - catalog-network
 
+    order-db:
+        image: postgres:15
+        container_name: order-db
+        healthcheck:
+            test: ["CMD", "pg_isready", "-U", "${ORDER_DB_USER}"]
+            interval: 10s
+            retries: 5
+            start_period: 5s
+        environment:
+            POSTGRES_USER: ${ORDER_DB_USER}
+            POSTGRES_PASSWORD: ${ORDER_DB_PASS}
+            POSTGRES_DB: ${ORDER_DB_NAME}
+        ports:
+            - 5434:5432
+        networks:
+            - order-network
+        volumes:
+            - order_db_data:/var/lib/postgresql/data
+
+    order-service:
+        image: nferreira1/techcommerce/order-service:1.0.0
+        container_name: order-service
+        build:
+            context: .
+            dockerfile: ./services/order/Dockerfile
+        depends_on:
+            order-db:
+                condition: service_healthy
+        environment:
+            JAVA_ENV: production.local
+            AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+            AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+            AWS_SQS_QUEUE_ENDPOINT: ${AWS_SQS_QUEUE_ENDPOINT}
+            JWT_EXPIRATION_TIME_IN_MINUTES: ${JWT_EXPIRATION_TIME_IN_MINUTES}
+            EMAIL_SERVICE_QUEUE_URL: ${EMAIL_SERVICE_QUEUE_URL}
+            ORDER_DB_USER: ${ORDER_DB_USER}
+            ORDER_DB_PASS: ${ORDER_DB_PASS}
+            ORDER_DB_NAME: ${ORDER_DB_NAME}
+        networks:
+            - aws-network
+            - order-network
+
     kong:
         depends_on:
             - identity-service
@@ -151,6 +199,7 @@ services:
         networks:
             - identity-network
             - catalog-network
+            - order-network
 
     seed:
         image: nferreira1/techcommerce/seed-catalog-service:1.0.0
@@ -188,6 +237,9 @@ networks:
     catalog-network:
         name: catalog-network
         driver: bridge
+    order-network:
+        name: order-network
+        driver: bridge
 
 volumes:
     localstack_data:
@@ -200,3 +252,5 @@ volumes:
         name: identity_db_data
     catalog_db_data:
         name: catalog_db_data
+    order_db_data:
+        name: order_db_data

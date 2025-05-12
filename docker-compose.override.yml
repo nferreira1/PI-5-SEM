@@ -37,6 +37,7 @@ services:
             TF_VAR_AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
             TF_VAR_AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
             TF_VAR_EMAIL_SERVICE_QUEUE_NAME: ${EMAIL_SERVICE_QUEUE_NAME}
+            TF_VAR_ORDER_SERVICE_QUEUE_NAME: ${ORDER_SERVICE_QUEUE_NAME}
             TF_VAR_AWS_ENDPOINT: http://aws:4566
         networks:
             - aws-network
@@ -64,6 +65,16 @@ services:
             - ./services/gateway/kong.development.yml:/etc/kong/kong.yml:ro
         extra_hosts:
             - "host.docker.internal:host-gateway"
+
+    swagger-ui:
+        image: swaggerapi/swagger-ui
+        container_name: swagger-ui
+        depends_on:
+            - kong
+        ports:
+            - 81:8080
+        environment:
+            API_URL: http://host.docker.internal:8082/order/api-docs
 
 networks:
     aws-network:
