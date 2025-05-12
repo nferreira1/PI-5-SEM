@@ -5,7 +5,7 @@ WORKDIR /app
 ARG JAVA_ENV
 ENV JAVA_ENV=${JAVA_ENV}
 
-COPY services/identity . 
+COPY services/order . 
 
 RUN chmod +x ./mvnw
 
