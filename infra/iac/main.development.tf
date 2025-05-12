@@ -25,18 +25,26 @@ resource "aws_s3_bucket_policy" "bucket_catalog_images_policy" {
         Effect    = "Allow"
         Principal = "*"
         Action    = "s3:GetObject"
-        Resource  = "${aws_s3_bucket.bucket_catalog_images.arn}/*"
+        Resource  = aws_s3_bucket.bucket_catalog_images.arn
       }
     ]
   })
 }
 
-resource "aws_sqs_queue" "sqs" {
+resource "aws_sqs_queue" "sqs_email" {
   name = var.EMAIL_SERVICE_QUEUE_NAME
 }
 
-output "sqs_queue_url" {
-  value = aws_sqs_queue.sqs.url
+resource "aws_sqs_queue" "sqs_order" {
+  name = var.ORDER_SERVICE_QUEUE_NAME
+}
+
+output "sqs_queue_url_email_service" {
+  value = aws_sqs_queue.sqs_email.url
+}
+
+output "sqs_queue_url_order_service" {
+  value = aws_sqs_queue.sqs_order.url
 }
 
 output "bucket_terraform" {

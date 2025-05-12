@@ -1,4 +1,4 @@
-package br.senac.techcommerce.identityservice.exceptions;
+package br.senac.techcommerce.orderservice.exceptions;
 
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 
@@ -7,8 +7,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -90,17 +88,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildErrorResponse(new ErrorResponseException(HttpStatus.UNAUTHORIZED, "E-mail ou senha inválidos."));
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    protected ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException badCredentialsException) {
-        return buildErrorResponse(new ErrorResponseException(HttpStatus.UNAUTHORIZED, "E-mail ou senha inválidos."));
-    }
-
-    @ExceptionHandler(AuthenticationException.class)
-    protected ResponseEntity<Object> handleAuthenticationException(AuthenticationException authenticationException) {
-        return buildErrorResponse(new ErrorResponseException(HttpStatus.UNAUTHORIZED,
-                "Acesso não autorizado. Faça login para acessar este recurso."));
-    }
-
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
             HttpHeaders headers, HttpStatusCode status, WebRequest request) {
@@ -128,7 +115,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Throwable.class)
     protected ResponseEntity<Object> handleException(Throwable ex) {
-        return buildErrorResponse(new ErrorResponseException(HttpStatus.INTERNAL_SERVER_ERROR, "Ocorreu um erro inesperado."));
+        return buildErrorResponse(
+                new ErrorResponseException(HttpStatus.INTERNAL_SERVER_ERROR, "Ocorreu um erro inesperado."));
     }
 
 }

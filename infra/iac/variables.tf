@@ -22,3 +22,8 @@ variable "EMAIL_SERVICE_QUEUE_NAME" {
   type    = string
   default = null
 }
+
+variable "ORDER_SERVICE_QUEUE_NAME" {
+  type    = string
+  default = null
+}
