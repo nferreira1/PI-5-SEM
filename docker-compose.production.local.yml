@@ -74,8 +74,6 @@ services:
             POSTGRES_USER: ${IDENTITY_DB_USER}
             POSTGRES_PASSWORD: ${IDENTITY_DB_PASS}
             POSTGRES_DB: ${IDENTITY_DB_NAME}
-        ports:
-            - 5432:5432
         networks:
             - identity-network
         volumes:
@@ -117,8 +115,6 @@ services:
             POSTGRES_USER: ${CATALOG_DB_USER}
             POSTGRES_PASSWORD: ${CATALOG_DB_PASS}
             POSTGRES_DB: ${CATALOG_DB_NAME}
-        ports:
-            - 5433:5432
         networks:
             - catalog-network
         volumes:
@@ -159,8 +155,6 @@ services:
             POSTGRES_USER: ${ORDER_DB_USER}
             POSTGRES_PASSWORD: ${ORDER_DB_PASS}
             POSTGRES_DB: ${ORDER_DB_NAME}
-        ports:
-            - 5434:5432
         networks:
             - order-network
         volumes:
