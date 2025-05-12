@@ -1,5 +1,6 @@
 import { AuthProvider, CartProvider } from "@/hooks";
 import {
+	AuthLayout,
 	Categories,
 	Category,
 	Home,
@@ -18,7 +19,9 @@ export function Routes() {
 			<RouterRoutes>
 				<Route element={<AuthProvider />}>
 					<Route element={<CartProvider />}>
-						<Route path="/orders" element={<Orders />} />
+						<Route element={<AuthLayout />}>
+							<Route path="/orders" element={<Orders />} />
+						</Route>
 
 						<Route element={<NonAuthLayout />}>
 							<Route path="/" element={<Home />} />

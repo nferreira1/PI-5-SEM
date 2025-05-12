@@ -7,12 +7,48 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "@/components/ui/sheet";
-import { useCart } from "@/hooks";
+import { useAuth, useCart } from "@/hooks";
+import { $api } from "@/lib/api";
+import { query } from "@/lib/query";
 import { ChevronLeft, ChevronRight, ShoppingCart, Trash2 } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { toast } from "sonner";
 
 export function SheetCart() {
-	const { cart, update, remove } = useCart();
+	const navigate = useNavigate();
+	const { token } = useAuth();
+	const { cart, update, remove, removeAll } = useCart();
+
+	const { mutate } = $api.useMutation("post", "/order/orders");
+
+	const handleCheckout = () => {
+		mutate(
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+				body: {
+					items: cart.items?.map(({ product, amount }) => ({
+						productId: product?.productId,
+						quantity: amount,
+						unitPrice: product?.price,
+					})),
+				},
+			},
+			{
+				onSuccess: () => {
+					removeAll();
+					query.invalidateQueries({
+						queryKey: ["get", "/order/orders"],
+					});
+					toast.success("Sucesso!", {
+						description: "Pedido realizado com sucesso.",
+					});
+					navigate("/orders");
+				},
+			},
+		);
+	};
 
 	return (
 		<Sheet>
@@ -184,7 +220,9 @@ export function SheetCart() {
 										</span>
 									</span>
 								</div>
-								<Button>FINALIZAR COMPRA</Button>
+								<Button onClick={handleCheckout}>
+									FINALIZAR COMPRA
+								</Button>
 							</section>
 						</>
 					)}

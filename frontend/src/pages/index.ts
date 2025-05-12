@@ -1,4 +1,5 @@
 // Layouts
+export { default as AuthLayout } from "@/pages/auth/layout";
 export { default as NonAuthLayout } from "@/pages/non-auth/layout";
 
 // Pages | Require authentication
