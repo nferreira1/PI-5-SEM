@@ -84,6 +84,8 @@ export const CartProvider = () => {
 			updatedCart.push({ product: { ...product }, amount });
 		}
 
+		toast.success("Produto adicionado ao carrinho!");
+
 		updateLocalStorage({ items: updatedCart });
 	};
 
