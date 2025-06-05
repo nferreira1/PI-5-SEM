@@ -1,23 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-	Form as F,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
+    Form as F,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectTrigger,
-	SelectValue,
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select";
 import { $api } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -61,7 +61,10 @@ export default function Form() {
 
 	const onSubmit = (values: z.infer<typeof schema>) =>
 		mutate(
-			{ body: { ...values } },
+			{ body: { 
+                ...values,
+                cpf: values.cpf.replace(/\D/g, ""),
+             } },
 			{
 				onError: (error) => {
 					if (error.errors?.length) {
